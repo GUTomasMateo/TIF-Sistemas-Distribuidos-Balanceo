@@ -5,7 +5,6 @@ Repositorio oficial para la implementación, simulación y evaluación experimen
 ---
 
 ## Requisitos Previos y Entorno
-* **Sistema Anfitrión:** Windows 11 con WSL2 (Ubuntu) habilitado.
 * **Virtualización:** Oracle VirtualBox y Vagrant instalados.
 * **Lenguaje:** Python 3.x con las librerías `simpy`, `pandas` y `matplotlib` instaladas.
 
