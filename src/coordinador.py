@@ -1,26 +1,32 @@
 import socket
-import json
+import time
 
-# IPs estáticas de los workers en la red Host-Only (enp0s8)
-WORKERS = [
-    {"id": 0, "ip": "192.168.56.11", "port": 5000, "carga": 0},
-    {"id": 1, "ip": "192.168.56.12", "port": 5000, "carga": 0}
-]
+# Direcciones IP de los nodos workers en la red del clúster
+WORKERS = ['192.168.1.95', '192.168.1.96']
+PUERTO = 5000
 
-def enviar_tarea(worker_ip, worker_port, tarea):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((worker_ip, worker_port))
-        s.sendall(json.dumps(tarea).encode('utf-8'))
-        respuesta = s.recv(1024).decode('utf-8')
-        return json.loads(respuesta)
-
-def balanceador_round_robin(tareas):
-    for idx, tarea in enumerate(tareas):
-        w = WORKERS[idx % len(WORKERS)]
-        print(f"[*] Asignando Tarea {tarea['id']} a Worker {w['id']} ({w['ip']}) via Round Robin")
-        enviar_tarea(w['ip'], w['port'], tarea)
+def ejecutar_coordinador():
+    print("[*] Iniciando Coordinador de Tareas Distribuidas...")
+    contador = 0
+    
+    try:
+        while True:
+            for ip in WORKERS:
+                contador += 1
+                print(f"[*] Enviando Tarea #{contador} al Worker ({ip}:{PUERTO})...")
+                
+                # Establecer comunicación TCP mediante Sockets
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((ip, PUERTO))
+                    s.send(f'tarea_{contador}'.encode('utf-8'))
+                    
+                    # Esperar y recibir la confirmación del worker
+                    respuesta = s.recv(1024).decode('utf-8')
+                    print(f"[+] Respuesta recibida de {ip}: {respuesta}")
+                
+                time.sleep(1) # Intervalo de control entre solicitudes
+    except KeyboardInterrupt:
+        print("\n[*] Coordinador detenido manualmente por el usuario.")
 
 if __name__ == "__main__":
-    lotes_prueba = [{"id": i, "costo": 2} for i in range(6)]
-    print("[*] Iniciando distribución de tareas desde el Coordinador...")
-    balanceador_round_robin(lotes_prueba)
+    ejecutar_coordinador()
