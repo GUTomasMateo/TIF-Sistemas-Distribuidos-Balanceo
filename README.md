@@ -17,3 +17,7 @@ Repositorio oficial para la implementación, simulación y evaluación experimen
 2. Levanta los tres nodos virtuales (Coordinador y dos Workers) configurados automáticamente en la red privada *Host-Only*:
    ```bash
    vagrant up
+
+### Paso 2: Descarga de archivos y ejecución
+1. Primero carga los archivos en las maquinas virtuales, worker.py para los nodos y coordinador y simulacion en la pcs coordinadora.
+2. Luego ejecuta los comandos en orden, primero el worker.py en ambos nodos y por ultimo el coordinador.py y luego el simulador. Se ejecuta el coordinador primero ya que busca los nodos disponibles, si es que no se ejecutaron los worker.py previamente, este lanzara un error ya que no estan disponibles los nodo.
